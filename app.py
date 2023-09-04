@@ -1,8 +1,9 @@
 from flask import Flask, request, jsonify
 from scraper import do_scraping
-from database import last_log
+from database import last_log, getEmpresaId
 
 import threading
+import re
 
 app = Flask(__name__)
 
@@ -14,14 +15,29 @@ def activate():
     global EXECUTING
     global ERROR
     
+    email = request.json.get('email')
+    password = request.json.get('password')
+    link = request.json.get('link')
+    startDate = request.json.get('start_date')
+    finalDate = request.json.get('final_date')
+
+    date_pattern = r'\d{2}/\d{2}/\d{4}'
+
     if EXECUTING[-1] == False:
-        EXECUTING.append(True)
+        if re.match(date_pattern, startDate) and re.match(date_pattern, finalDate):
+            id = getEmpresaId(email, password)
 
-        thread = threading.Thread(target=do_scraping, args=(EXECUTING,))
-        thread.start()
+            if id:
+                EXECUTING.append(True)
 
-        response = {"message": "successfully started"}
-        return jsonify(response), 200
+                thread = threading.Thread(target=do_scraping, args=(EXECUTING, email, password, link, id, startDate, finalDate))
+                thread.start()
+
+                response = {"message": "successfully started"}
+                return jsonify(response), 200
+        else:
+            response = {"message": "Dates must be in dd/mm/yyyy format"}
+            return jsonify(response), 400
     else:
         response = {"message": "another thread is running"}
         return jsonify(response), 405
@@ -56,4 +72,4 @@ def getLastLog():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5001)

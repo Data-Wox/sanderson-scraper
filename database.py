@@ -1,8 +1,29 @@
 import mysql.connector
 from datetime import datetime
 
-# SELECT * FROM logs ORDER BY id DESC LIMIT 1;
+def getEmpresaId(email, password):
+    try:
+        db = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            database="sanderson"
+        )
 
+        connection = db.cursor(buffered=True)
+
+        connection.execute("SELECT id FROM empresa WHERE email='{}' AND password='{}';".format(email, password))
+        db.commit()
+
+        id = connection.fetchone()[0]
+
+        if id:
+            return id
+        else:
+            return False
+
+    except Exception as e:
+        print(e)
+        return False
 
 def add_log(message):
     try:
@@ -38,7 +59,7 @@ def last_log():
 
         log = connection.fetchone()
 
-        if id:
+        if log:
             return log
         else:
             return False
@@ -73,7 +94,7 @@ def verify_relatorio_0063(data):
         print(e)
         return False
 
-def insert_relatorio_0063(data):
+def insert_relatorio_0063(data, idEmpresa):
     try:
         db = mysql.connector.connect(
             host="localhost",
@@ -85,7 +106,7 @@ def insert_relatorio_0063(data):
 
         (cliente, pacote, servico, total, utilizados, validade, compra) = data
 
-        connection.execute("INSERT INTO `relatorio_0063` (`id`, `cliente`, `pacote`, `servico`, `total`, `utilizados`, `validade`, `compra`) VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', '{}');".format(cliente, pacote, servico, total, utilizados, validade, compra))
+        connection.execute("INSERT INTO `relatorio_0063` (`id_empresa`, `id`, `cliente`, `pacote`, `servico`, `total`, `utilizados`, `validade`, `compra`) VALUES ('{}', NULL, '{}', '{}', '{}', '{}', '{}', '{}', '{}');".format(idEmpresa, cliente, pacote, servico, total, utilizados, validade, compra))
         
         db.commit()
 
@@ -121,7 +142,7 @@ def verify_relatorio_0123(data):
         print(e)
         return False
 
-def insert_relatorio_0123(data):
+def insert_relatorio_0123(data, idEmpresa):
     try:
         db = mysql.connector.connect(
             host="localhost",
@@ -133,7 +154,7 @@ def insert_relatorio_0123(data):
 
         (profissional, tipo_contratacao, cargo, banco, agencia, conta, faturado, rateio_servicos, rateio_produtos, rateio_outros, caixinha, descontos, a_pagar, valor_casa) = data
 
-        connection.execute("INSERT INTO `relatorio_0123` (`id`, `profissional`, `tipo_contratacao`, `cargo`, `banco`, `agencia`, `conta`, `faturado`, `rateio_servicos`, `rateio_produtos`, `rateio_outros`, `caixinha`, `descontos`, `a_pagar`, `valor_casa`) VALUES (NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(profissional, tipo_contratacao, cargo, banco, agencia, conta, faturado, rateio_servicos, rateio_produtos, rateio_outros, caixinha, descontos, a_pagar, caixinha, valor_casa))
+        connection.execute("INSERT INTO `relatorio_0123` (`id_empresa`, `id`, `profissional`, `tipo_contratacao`, `cargo`, `banco`, `agencia`, `conta`, `faturado`, `rateio_servicos`, `rateio_produtos`, `rateio_outros`, `caixinha`, `descontos`, `a_pagar`, `valor_casa`) VALUES ('{}',NULL,'{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(idEmpresa ,profissional, tipo_contratacao, cargo, banco, agencia, conta, faturado, rateio_servicos, rateio_produtos, rateio_outros, caixinha, descontos, a_pagar, caixinha, valor_casa))
         
         db.commit()
 
@@ -142,7 +163,7 @@ def insert_relatorio_0123(data):
         print(e)
         return None
     
-def insert_relatorio_0053(data):
+def insert_relatorio_0053(data, idEmpresa):
     try:
         db = mysql.connector.connect(
             host="localhost",
@@ -154,7 +175,7 @@ def insert_relatorio_0053(data):
 
         (data_reserva, hora, cliente, servico, valor) = data
 
-        connection.execute("INSERT INTO `relatorio_0053` (`id`, `data_reserva`, `hora`, `cliente`, `servico`, `valor`) VALUES (NULL, '{}', '{}', '{}', '{}', '{}');".format(data_reserva, hora, cliente, servico, valor))
+        connection.execute("INSERT INTO `relatorio_0053` (`id_empresa`, `id`, `data_reserva`, `hora`, `cliente`, `servico`, `valor`) VALUES ('{}', NULL, '{}', '{}', '{}', '{}', '{}');".format(idEmpresa, data_reserva, hora, cliente, servico, valor))
         
         db.commit()
 
@@ -189,7 +210,7 @@ def verify_relatorio_0053(data):
         print(e)
         return False
 
-def insert_relatorio_0004(data):
+def insert_relatorio_0004(data, idEmpresa):
     try:
         db = mysql.connector.connect(
             host="localhost",
@@ -201,8 +222,8 @@ def insert_relatorio_0004(data):
 
         (cliente, codigo, aniversario, telefone, celular, email, sexo, como_conheceu, cpf, cep, endereco, numero, estado, cidade, complemento, bairro, profissao, cadastrado, obs, rg) = data
 
-        query = "INSERT INTO `relatorio_0004` (`id`, `cliente`, `codigo`, `aniversario`, `telefone`, `celular`, `email`, `sexo`, `como_conheceu`, `cpf`, `cep`, `endereco`, `numero`, `estado`, `cidade`, `complemento`, `bairro`, `profissao`, `cadastrado`, `obs`, `rg`) VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');".format(
-            cliente, codigo, aniversario, telefone, celular, email, sexo, como_conheceu, cpf, cep, endereco, numero, estado, cidade, complemento, bairro, profissao, cadastrado, obs, rg)
+        query = "INSERT INTO `relatorio_0004` (`id_empresa`, `id`, `cliente`, `codigo`, `aniversario`, `telefone`, `celular`, `email`, `sexo`, `como_conheceu`, `cpf`, `cep`, `endereco`, `numero`, `estado`, `cidade`, `complemento`, `bairro`, `profissao`, `cadastrado`, `obs`, `rg`) VALUES ('{}', NULL, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');".format(
+            idEmpresa, cliente, codigo, aniversario, telefone, celular, email, sexo, como_conheceu, cpf, cep, endereco, numero, estado, cidade, complemento, bairro, profissao, cadastrado, obs, rg)
 
         connection.execute(query)
 
@@ -242,7 +263,7 @@ def verify_relatorio_0004(data):
         print(e)
         return False
     
-def insert_relatorio_0186(data):
+def insert_relatorio_0186(data, idEmpresa):
     try:
         db = mysql.connector.connect(
             host="localhost",
@@ -254,8 +275,8 @@ def insert_relatorio_0186(data):
 
         (data, comanda, item, tipo, categoria, profissional, assistente_1, assistente_2, comissao_percentual, cliente, email, telefone, celular, valor, desconto, quantidade, custo, comissao, liquido, ua) = data
 
-        query = "INSERT INTO `relatorio_0186` (`id`, `data`, `comanda`, `item`, `tipo`, `categoria`, `profissional`, `assistente_1`, `assistente_2`, `comissao_percentual`, `cliente`, `email`, `telefone`, `celular`, `valor`, `desconto`, `quantidade`, `custo`, `comissao`, `liquido`, `ua`) VALUES (NULL, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');".format(
-            data, comanda, item, tipo, categoria, profissional, assistente_1, assistente_2, comissao_percentual, cliente, email, telefone, celular, valor, desconto, quantidade, custo, comissao, liquido, ua)
+        query = "INSERT INTO `relatorio_0186` (`id_empresa`, `id`, `data`, `comanda`, `item`, `tipo`, `categoria`, `profissional`, `assistente_1`, `assistente_2`, `comissao_percentual`, `cliente`, `email`, `telefone`, `celular`, `valor`, `desconto`, `quantidade`, `custo`, `comissao`, `liquido`, `ua`) VALUES ('{}', NULL, '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');".format(
+            idEmpresa, data, comanda, item, tipo, categoria, profissional, assistente_1, assistente_2, comissao_percentual, cliente, email, telefone, celular, valor, desconto, quantidade, custo, comissao, liquido, ua)
 
         connection.execute(query)
 

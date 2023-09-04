@@ -5,20 +5,25 @@ from database import insert_relatorio_0063, verify_relatorio_0063, insert_relato
 import time
 import os
 
-EMPRESA_LINK = 'https://admin.salaovip.com.br/kihonmorumbi/admin'
-EMPRESA_EMAIL = 'alex.zona@hotmail.com'
-EMPRESA_PASSWORD = '123'
+EMPRESA_LINK = ''
+EMPRESA_EMAIL = ''
+EMPRESA_PASSWORD = ''
+EMPRESA_ID = 0
 
-INIT_DATE_0186 = '01/07/2023'
-FINAL_DATE_0186 = '23/08/2023'
+INIT_DATE_0186 = ''
+FINAL_DATE_0186 = ''
 
-INIT_DATE_0123 = '01/07/2023'
-FINAL_DATE_0123 = '23/08/2023'
+INIT_DATE_0123 = ''
+FINAL_DATE_0123 = ''
 
-INIT_DATE_0053 = '01/07/2023'
-FINAL_DATE_0053 = '23/08/2023'
+INIT_DATE_0053 = ''
+FINAL_DATE_0053 = ''
 
 def login(driver):
+    global EMPRESA_LINK
+    global EMPRESA_EMAIL
+    global EMPRESA_PASSWORD
+
     try:
         driver.get(EMPRESA_LINK)
 
@@ -298,7 +303,7 @@ def parse_relatorio_0053(fileName):
 
     return total_data
 
-def relatorio_0186(driver):
+def relatorio_0186(driver, idEmpresa):
     driver.get('https://admin.avec.beauty/admin/relatorios/0186')
     time.sleep(3)
 
@@ -343,11 +348,13 @@ def relatorio_0186(driver):
         res = verify_relatorio_0186(data)
 
         if res != True:
-            insert_relatorio_0186(data)
+            insert_relatorio_0186(data, idEmpresa)
 
     time.sleep(4)
 
-def relatorio_0063(driver):
+def relatorio_0063(driver, idEmpresa):
+    global EMPRESA_ID
+
     driver.get('https://admin.avec.beauty/admin/relatorios/0063')
     time.sleep(10)
 
@@ -382,13 +389,13 @@ def relatorio_0063(driver):
             res = verify_relatorio_0063(data)
 
             if res != True:
-                insert_relatorio_0063(data)
+                insert_relatorio_0063(data, idEmpresa)
     except Exception as e:
         add_log('Error inserting report 0063: ' + str(e))
 
     time.sleep(4)
 
-def relatorio_0123(driver):
+def relatorio_0123(driver, idEmpresa):
     driver.get('https://admin.avec.beauty/admin/relatorios/0123')
     time.sleep(3)
 
@@ -432,13 +439,13 @@ def relatorio_0123(driver):
             res = verify_relatorio_0123(_data)
 
             if res != True:
-                insert_relatorio_0123(_data)
+                insert_relatorio_0123(_data, idEmpresa)
     except Exception as e:
         add_log('Error inserting report 0123: ' + str(e))
     
     time.sleep(4)
 
-def relatorio_0053(driver):
+def relatorio_0053(driver, idEmpresa):
     driver.get('https://admin.avec.beauty/admin/relatorios/0053')
     time.sleep(3)
 
@@ -482,13 +489,13 @@ def relatorio_0053(driver):
             res = verify_relatorio_0053(data)
 
             if res != True:
-                insert_relatorio_0053(data)
+                insert_relatorio_0053(data, idEmpresa)
     except Exception as e:
         add_log('Error inserting report 0053: ' + str(e))
 
     time.sleep(4)
 
-def relatorio_0004(driver):
+def relatorio_0004(driver, idEmpresa):
     driver.get('https://admin.avec.beauty/admin/relatorios/0004')
     time.sleep(10)
 
@@ -545,56 +552,45 @@ def relatorio_0004(driver):
             res = verify_relatorio_0004(data)
 
             if res != True:
-                insert_relatorio_0004(data)
+                insert_relatorio_0004(data, idEmpresa)
     except Exception as e:
         add_log('Error inserting report 0004: ' + str(e))
 
     time.sleep(4)
 
-def scrape_relatorio_0063():
+def do_scraping(EXECUTING, email, password, link, idEmpresa, startDate, finalDate):
+    global EMPRESA_EMAIL
+    global EMPRESA_LINK
+    global EMPRESA_PASSWORD
+    global EMPRESA_ID
+    global INIT_DATE_0053
+    global INIT_DATE_0123
+    global INIT_DATE_0186
+    global FINAL_DATE_0053
+    global FINAL_DATE_0123
+    global FINAL_DATE_0186
+
+    EMPRESA_EMAIL = email
+    EMPRESA_PASSWORD = password
+    EMPRESA_LINK = link
+    EMPRESA_ID = idEmpresa
+    INIT_DATE_0186 = startDate
+    FINAL_DATE_0186 = finalDate
+    INIT_DATE_0123 = startDate
+    FINAL_DATE_0123 = finalDate
+    INIT_DATE_0053 = startDate
+    FINAL_DATE_0053 = finalDate
+
     driver = Webdriver(os.path.dirname(__file__)).getDriver()
+
     login(driver=driver)
 
-    relatorio_0063(driver=driver)
+    relatorio_0063(driver=driver, idEmpresa=idEmpresa)
+    relatorio_0123(driver=driver, idEmpresa=idEmpresa)
+    relatorio_0004(driver=driver, idEmpresa=idEmpresa)
+    relatorio_0053(driver=driver, idEmpresa=idEmpresa)
+    relatorio_0186(driver=driver, idEmpresa=idEmpresa)
 
     driver.quit()
 
-def scrape_relatorio_0123():
-    driver = Webdriver(os.path.dirname(__file__)).getDriver()
-    login(driver=driver)
-
-    relatorio_0123(driver=driver)
-    
-    driver.quit()
-
-def scrape_relatorio_0004():
-    driver = Webdriver(os.path.dirname(__file__)).getDriver()
-    login(driver=driver)
-
-    relatorio_0004(driver=driver)
-    
-    driver.quit()
-
-def scrape_relatorio_0053():
-    driver = Webdriver(os.path.dirname(__file__)).getDriver()
-    login(driver=driver)
-
-    relatorio_0053(driver=driver)
-    
-    driver.quit()
-
-def scrape_relatorio_0186():
-    driver = Webdriver(os.path.dirname(__file__)).getDriver()
-    login(driver=driver)
-
-    relatorio_0186(driver=driver)
-    
-    driver.quit()
-
-def do_scraping(EXECUTING):
-    scrape_relatorio_0063()
-    # scrape_relatorio_0123()
-    # scrape_relatorio_0004()
-    # scrape_relatorio_0053()
-    # scrape_relatorio_0186()
     EXECUTING.append(False)

@@ -21,6 +21,10 @@ class Webdriver:
             },
         )
 
+        GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google-chrome'
+        CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+        chrome_options.binary_location = GOOGLE_CHROME_BIN
+
         self.driver = webdriver.Chrome(options=chrome_options)
 
     def getDriver(self):
